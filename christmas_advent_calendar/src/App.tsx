@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { isConstructorDeclaration } from "typescript";
 import "./App.css";
 
 function App() {
@@ -6,8 +7,15 @@ function App() {
 	const [calloriesInput, setCalloriesInput] = useState("");
 	const [highestCalloriesCount, setCalloriesCount] = useState("");
 
+	const [racksackInput, setRacksackInput] = useState("");
+	const [racksackRearengementResult, setRacksackRearengementResult] = useState("");
+
 	const handleCalloriesInputChange = (event: any) => {
 		setCalloriesInput(event.target.value);
+	};
+
+	const handleRacksackInputChange = (event: any) => {
+		setRacksackInput(event.target.value);
 	};
 
 	const validateInput = (methodNum: number) => {
@@ -44,6 +52,7 @@ function App() {
 			of callories.`
 		);
 	};
+	 
 
 	const checkCalloriesTopThreeElfs = () => {
 		const elfCallorieGroups = calloriesInput.split("  ");
@@ -64,6 +73,60 @@ function App() {
 		);
 	};
 
+
+	const handleRacksackInput = () => {
+		const inputArr = racksackInput.split(' ');
+		console.log(racksackInput);
+		console.log(inputArr);
+		let finalRearangedNumber = 0;
+		inputArr.forEach(racksackInputValue => {
+			finalRearangedNumber+=rearangeItems(racksackInputValue);
+		});
+		console.log(finalRearangedNumber);
+	}
+
+	const rearangeItems = (word: string): number => {
+		const breakingPoint = word.length/2;
+		console.log(breakingPoint);
+
+		const firstHalf = word.slice(0, breakingPoint);
+		const secondHalf = word.slice(breakingPoint);
+		console.log(firstHalf);
+		console.log(secondHalf);
+		const similarLettersArray = checkForSimilarLetters(firstHalf, secondHalf);
+		console.log(similarLettersArray);
+		let similarLettersCount = 0;
+		similarLettersArray.forEach(letter => {
+			const arr = alphabetPosition(letter);
+			arr.forEach(num => similarLettersCount+=num)
+		});
+		return similarLettersCount;
+	}
+
+	const checkForSimilarLetters = (wordOne:string, wordTwo:string) => {
+		const similarLettersArray: string[] = [];
+		console.log('word one length is ' + wordOne.length);
+		for(let i = 0; i < wordOne.length; i++){
+			if(wordTwo.includes(wordOne.charAt(i)) && !similarLettersArray.find((letter) => letter === wordOne.charAt(i)))
+				similarLettersArray.push(wordOne.charAt(i));
+		}
+		return similarLettersArray;
+	}
+
+	const alphabetPosition = (text: string) => {
+		text.split(' ').join('');
+		var chari = "";
+		var arr = [];
+		var alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+		for(var i = 0; i < text.length; i++){
+		  chari = text.charAt(i);
+		  if(alphabet.indexOf(chari) > -1){
+			arr.push(alphabet.indexOf(chari)+1);
+		  }
+		}
+		return arr;
+	  }
+
 	return (
 		<div className="App">
 			<div>
@@ -80,6 +143,18 @@ function App() {
 			<button onClick={() => validateInput(2)}>Check callories for top 3 elf</button>
 			<div>{highestCalloriesCount}</div>
 			<br />
+			<div>
+				<p>Check :</p>
+			</div>
+			<input
+				type="text"
+				id="racksackInput"
+				name="racksackInput"
+				onChange={handleRacksackInputChange}
+				value={racksackInput}
+			/>
+			<button onClick={() => handleRacksackInput()}>Check most callories per elf</button>
+			<div>{racksackRearengementResult}</div>
 			<div>{error}</div>
 		</div>
 	);
